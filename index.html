@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>导出你电脑上安装的软件名</title>
+    <link rel="stylesheet" href="./bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <style>
+      .template { display: none; }
+      .display { display: block; }
+    </style>
+  </head>
+  <body>
+    <button id="regeditBtn">记录名字</button>
+    <button id="save">保存修改</button>
+    <table id="regedit" class="table table-hover table-bordered">
+      <caption>备份你电脑上所有安装软件名字，以及导出。</caption>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>软件名</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody class="tbody">
+        <tr class="template">
+            <th class="num">0</th>
+            <td class="product">火绒</td>
+            <td class="mod">
+              <a href="javascript:;">删除</a>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- You can also require other files to run in this process -->
+    <script src="./renderer.js"></script>
+    <script>
+      const electron = window.electron
+
+      const ipcRenderer = window.electron.ipcRenderer;
+      
+      const regeditBtn = document.getElementById('regeditBtn')
+
+      const $regedit = $('#regedit')
+      const $tbody = $('.tbody')
+      
+      regeditBtn.addEventListener('click', () => {
+        $tbody.children('tr.block').remove()
+        ipcRenderer.send('getRegedit', 'ping')
+      })
+      
+      ipcRenderer.on('getRegedit-reply', (event, arg) => {
+        let product_length = Object.keys(arg).length
+
+        for (let i = 0 ; i < product_length ; i++) {
+          let template = $('.template').clone()
+          template.children('.num').html(i)
+          template.children('.product').html(arg[i])
+          template.removeClass('template').addClass('block')
+          $tbody.append(template)
+        }
+      })
+    </script>
+  </body>
+</html>

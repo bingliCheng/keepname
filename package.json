@@ -1,0 +1,21 @@
+{
+  "name": "keepname",
+  "version": "1.0.0",
+  "description": "Export your application name.",
+  "main": "main.js",
+  "scripts": {
+    "dev": "electron ."
+  },
+  "repository": "https://github.com/bingliCheng/keepname.git",
+  "keywords": [
+    "Electron"
+  ],
+  "author": "bingliCheng <binglicf@outlook.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^6.0.12"
+  },
+  "dependencies": {
+    "regedit": "^3.0.3"
+  }
+}
