@@ -15,7 +15,12 @@ ipcMain.on('getRegedit', (event, arg) => {
 
   fs.exists(path.join(__dirname, filePath), (exists) => {
     if (exists) { // 如果已经读取过注册表就不再读取，以免造成二次堵塞进程
-      
+      fs.readFile(filePath, (err, data) => { // 读取本地json
+        if (err) return console.log(err)
+
+        let tmpObj = JSON.parse(data)
+        event.sender.send('getRegedit-reply', tmpObj.data)
+      })
     } 
     else { // 如果是第一次进来则生成文件
       console.log('writting file...')
@@ -33,10 +38,10 @@ ipcMain.on('getRegedit', (event, arg) => {
         }
         console.log('Write successfully ')
       })
+      event.sender.send('getRegedit-reply', regData)
     }
   })
 
-  event.sender.send('getRegedit-reply', regData)
 })
 
 function getRegedit() {
