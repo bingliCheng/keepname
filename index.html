@@ -11,9 +11,11 @@
   </head>
   <body>
     <button id="regeditBtn">记录名字</button>
-    <button id="save">保存修改</button>
+    <button id="saveBtn">保存修改</button>
+    <button id="addBtn">添加其他</button>
+    <button id="exportBtn">导出全部</button>
     <table id="regedit" class="table table-hover table-bordered">
-      <caption>备份你电脑上所有安装软件名字，以及导出。</caption>
+      <caption class="tips">备份你电脑上所有安装软件名字，以及导出。（请等待进程流畅后再点击记录名字按钮，否则会有遗漏。）</caption>
       <thead>
         <tr>
           <th>#</th>
@@ -42,15 +44,22 @@
       const regeditBtn = document.getElementById('regeditBtn')
 
       const $regedit = $('#regedit')
+      const $tips = $('.tips')
       const $tbody = $('.tbody')
       
       regeditBtn.addEventListener('click', () => {
         $tbody.children('tr.block').remove()
         ipcRenderer.send('getRegedit', 'ping')
       })
+
+      function replaceTipsHTML(content) {
+        $tips.html(content)
+      }
       
-      ipcRenderer.on('getRegedit-reply', (event, arg) => {
+      ipcRenderer.on('getRegedit-reply', (event, arg) => { // 
         let product_length = Object.keys(arg).length
+
+        replaceTipsHTML(`本次已读取到${product_length}个软件名字。`)
 
         for (let i = 0 ; i < product_length ; i++) {
           let template = $('.template').clone()
