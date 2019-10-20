@@ -6,3 +6,5 @@
 // process.
 global.electron = require('electron');
 window.$ = window.jQuery = require('./js/jquery.min');
+const electron = window.electron
+const ipcRenderer = window.electron.ipcRenderer;

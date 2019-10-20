@@ -1,10 +1,11 @@
 {
   "name": "keepname",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Export your application name.",
   "main": "main.js",
   "scripts": {
-    "dev": "electron ."
+    "dev": "electron .",
+    "build": "electron-packager . keepname --win --out ../myClient --arch=x64 --app-version=0.0.4 --electron-version=6.0.12"
   },
   "repository": "https://github.com/bingliCheng/keepname.git",
   "keywords": [
@@ -16,6 +17,7 @@
     "electron": "^6.0.12"
   },
   "dependencies": {
+    "electron-packager": "^14.0.6",
     "regedit": "^3.0.3"
   }
 }

@@ -4,18 +4,24 @@
     <meta charset="UTF-8">
     <title>导出你电脑上安装的软件名</title>
     <link rel="stylesheet" href="./bootstrap-3.3.7-dist/css/bootstrap.min.css">
-    <style>
-      .template { display: none; }
-      .display { display: block; }
-    </style>
+    <link rel="stylesheet" href="./css/index.css">
   </head>
   <body>
-    <button id="regeditBtn">记录名字</button>
-    <button id="saveBtn">保存修改</button>
-    <button id="addBtn">添加其他</button>
-    <button id="exportBtn">导出全部</button>
+    <button id="readRegeditBtn" class="btn btn-primary">读取数据</button>
+    <button id="displayBtn" class="btn btn-primary">显示信息</button>
+    <button id="saveBtn" class="btn btn-primary">保存修改</button>
+    <button id="exportBtn" class="btn btn-primary">导出全部</button>
     <table id="regedit" class="table table-hover table-bordered">
-      <caption class="tips">备份你电脑上所有安装软件名字，以及导出。（请等待进程流畅后再点击记录名字按钮，否则会有遗漏。）</caption>
+      <caption class="tips">
+        <div>没有你想要的？ <a id="addBtn" class="btn btn-info btn-xs" href="javascript:;">添加</a></div>
+        <div>早点了？想重新读取？ <a id="reloadBtn" class="btn btn-info btn-xs" href="javascript:;">重读</a></div>
+        <div class="tips-left pull-left">
+            备份你电脑上所有安装软件名字，以及导出。<code>（请等待进程流畅后再点击记录名字按钮，否则会有遗漏。已加载过请无视本条。）</code>
+        </div>
+        <div class="tips-right pull-right">
+          按钮点击次数：<code class="count">0</code>
+        </div>
+      </caption>
       <thead>
         <tr>
           <th>#</th>
@@ -33,42 +39,14 @@
         </tr>
       </tbody>
     </table>
+
+    <div class="fix-bar">
+        <span class="glyphicon glyphicon-arrow-up"></span>
+        <span class="glyphicon glyphicon-arrow-down"></span>
+    </div>
     
-    <!-- You can also require other files to run in this process -->
     <script src="./renderer.js"></script>
-    <script>
-      const electron = window.electron
-
-      const ipcRenderer = window.electron.ipcRenderer;
-      
-      const regeditBtn = document.getElementById('regeditBtn')
-
-      const $regedit = $('#regedit')
-      const $tips = $('.tips')
-      const $tbody = $('.tbody')
-      
-      regeditBtn.addEventListener('click', () => {
-        $tbody.children('tr.block').remove()
-        ipcRenderer.send('getRegedit', 'ping')
-      })
-
-      function replaceTipsHTML(content) {
-        $tips.html(content)
-      }
-      
-      ipcRenderer.on('getRegedit-reply', (event, arg) => { // 
-        let product_length = Object.keys(arg).length
-
-        replaceTipsHTML(`本次已读取到${product_length}个软件名字。`)
-
-        for (let i = 0 ; i < product_length ; i++) {
-          let template = $('.template').clone()
-          template.children('.num').html(i)
-          template.children('.product').html(arg[i])
-          template.removeClass('template').addClass('block')
-          $tbody.append(template)
-        }
-      })
-    </script>
+    <script src="./bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="./js/index.js"></script>
   </body>
 </html>

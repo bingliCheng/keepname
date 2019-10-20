@@ -1,0 +1,8 @@
+/* Index Css */
+::-webkit-scrollbar { display: none; }
+.template { display: none; }
+.display { display: block; }
+.fix-bar { position: fixed; right: 35px; bottom: 5%; font-size: 1.2em; }
+.fix-bar span { display: block; cursor: pointer; }
+.fix-bar span:hover { color: #82d7ff; transition: color .3s; }
+.fix-bar span.glyphicon-arrow-up { margin-bottom: 10px; }

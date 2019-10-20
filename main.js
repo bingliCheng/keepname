@@ -12,39 +12,70 @@ let mainWindow
 let regData = []
 
 ipcMain.on('getRegedit', (event, arg) => {
-
-  fs.exists(path.join(__dirname, filePath), (exists) => {
+  fs.exists(path.join(__dirname, filePath), (exists) => { // 判断文件是否存在
     if (exists) { // 如果已经读取过注册表就不再读取，以免造成二次堵塞进程
-      fs.readFile(filePath, (err, data) => { // 读取本地json
-        if (err) return console.log(err)
-
-        let tmpObj = JSON.parse(data)
-        event.sender.send('getRegedit-reply', tmpObj.data)
-      })
+      PostLocalData(event, filePath)
     } 
     else { // 如果是第一次进来则生成文件
       console.log('writting file...')
-      let tmpText = `{"data" : [`
-      
-      for (let item in regData) {
-        tmpText += '"' + regData[item] + '",'
-      }
-      tmpText = tmpText.substr(0, tmpText.length - 1) //删除拼接后的最后一个逗号
-      tmpText += `]}`
 
-      fs.writeFile(filePath, tmpText, err => {
-        if (err) {
-          console.log(`err: ${err}`)
-        }
-        console.log('Write successfully ')
-      })
+      let tmpText
+
+      tmpText = dealText(regData)
+
+      writeFile(filePath, tmpText)
       event.sender.send('getRegedit-reply', regData)
     }
   })
-
 })
 
-function getRegedit() {
+ipcMain.on('readRegedit', (event, arg) => {
+  event.sender.send('readRegedit-reply', regData)
+})
+
+ipcMain.on('reloadRegedit', (event, arg) => {
+  getRegedit(() => {
+    console.log(123)
+  })
+  // let tmpText
+
+  // console.log(regData)
+
+  // tmpText = dealText(regData)
+
+  // writeFile(filePath, tmpText)
+})
+
+function dealText(data) { // 拼接JSON数据
+  let tmpText = `{"data" : [`
+  for (let item in data) {
+    tmpText += '"' + data[item] + '",'
+  }
+  tmpText = tmpText.substr(0, tmpText.length - 1) //删除拼接后的最后一个逗号
+  tmpText += `]}`
+
+  return tmpText
+}
+
+function writeFile(path, content) { // 写入数据到本地文件
+  fs.writeFile(path, content, err => {
+    if (err) {
+      console.log(`err: ${err}`)
+    }
+    console.log('Write successfully ')
+  })
+}
+
+function PostLocalData(event, path) {
+  fs.readFile(path, (err, data) => { // 读取本地json
+    if (err) return console.log(err)
+
+    let tmpObj = JSON.parse(data)
+    event.sender.send('getRegedit-reply', tmpObj.data)
+  })
+}
+
+function getRegedit(cb) {
   // 开始获取注册表
   regedit.list([regeditPath], function (err, data) {
     if (err) {
@@ -86,6 +117,7 @@ function getRegedit() {
         })
       }
     }
+    cb()
   })
 }
 
